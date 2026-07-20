@@ -1,0 +1,1 @@
+"""Life Topography local application."""

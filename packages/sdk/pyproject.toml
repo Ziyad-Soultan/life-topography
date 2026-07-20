@@ -1,0 +1,13 @@
+[project]
+name = "life-topography-sdk"
+version = "0.1.0"
+description = "Connector contracts for Life Topography"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = "Apache-2.0"
+authors = [{ name = "Ziyad Soultan" }]
+dependencies = ["pydantic>=2.11,<3"]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"

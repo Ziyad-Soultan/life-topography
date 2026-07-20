@@ -1,0 +1,29 @@
+[project]
+name = "life-topography"
+version = "0.1.0"
+description = "Private, local-first personal data topography"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = "Apache-2.0"
+authors = [{ name = "Ziyad Soultan" }]
+dependencies = [
+  "alembic>=1.16,<2",
+  "fastapi>=0.116,<1",
+  "life-topography-sdk",
+  "mcp>=1.12,<2",
+  "pydantic-settings>=2.10,<3",
+  "sqlalchemy>=2.0,<3",
+  "structlog>=25.4,<26",
+  "typer>=0.16,<1",
+  "uvicorn>=0.35,<1",
+]
+
+[project.scripts]
+topography = "life_topography.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+life-topography-sdk = { workspace = true }

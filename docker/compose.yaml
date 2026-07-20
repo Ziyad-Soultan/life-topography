@@ -1,0 +1,15 @@
+services:
+  topography:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8787:8787"
+    volumes:
+      - topography-data:/data
+    environment:
+      TOPOGRAPHY_DATA_DIR: /data
+
+volumes:
+  topography-data:
