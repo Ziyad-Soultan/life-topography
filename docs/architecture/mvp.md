@@ -1,6 +1,8 @@
 # Life Topography — privacy-first, self-hosted MVP architecture
 
-**Decision:** ship a single-user local application first: an encrypted SQLite/SQLCipher vault plus encrypted attachment store, a consent-gated Gmail **metadata-first** connector, a deterministic ingestion/indexing worker, and a local-only query API/UI. Offer an optional local agent through MCP, but make neither an LLM nor an agent necessary for retrieval. Raw personal data never leaves the host by default.
+> **Status:** long-term target architecture written before the MBOX validation build. It is not a description of the current implementation. The shipped technical validation MVP uses metadata-only local MBOX import and ordinary SQLite with owner-only permissions; SQLCipher, Gmail OAuth, attachments, MCP, and model features remain deferred. See the [implemented validation sweep](../validation/2026-07-21-mvp-validation-sweep.md) and [next-phase plan](../plans/2026-07-21-post-mvp-validation-plan.md).
+
+**Long-term target decision:** if the deterministic map proves useful, evolve toward a single-user local application with an encrypted SQLite/SQLCipher vault, consent-gated Gmail **metadata-first** connector, deterministic ingestion/indexing, and a local-only query API/UI. Offer an optional local agent through MCP only after the evidence layer earns it. Neither an LLM nor an agent is necessary for retrieval. Raw personal data never leaves the host by default.
 
 This deliberately does **not** start as a generic agent, cloud graph database, vector SaaS, or a large-scale Gmail archive. Those increase the attack surface and make deletion and consent harder without improving the first user outcome: “show me the people, commitments, places, and topics that shaped this time period, with links back to the evidence.”
 

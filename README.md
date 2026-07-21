@@ -4,7 +4,9 @@ A private, local-first evidence map for personal history.
 
 Life Topography turns a bounded email export into an inspectable map of the people, organizations, and threads that shaped a period of your life. Every node and relationship links back to the header records that created it. No cloud account, remote model, or inbox permission is required.
 
-> **Status: validation MVP.** The MBOX onboarding flow, deterministic map, provenance drill-down, resumable import, and full vault reset work. The SQLite vault is **not application-level encrypted yet**. Use synthetic data or an encrypted host disk.
+> **Status: technical validation candidate, ready for bounded personal-data testing.** The MBOX onboarding flow, deterministic map, provenance drill-down, resumable import, and full vault reset work. Docker runtime, final narrow-screen verification, personal usefulness, and external-user acceptance remain open. The SQLite vault is **not application-level encrypted yet**. Use synthetic data or an encrypted host disk.
+
+See the [full MVP validation sweep](docs/validation/2026-07-21-mvp-validation-sweep.md) for measured results and known gaps, and the [post-MVP validation plan](docs/plans/2026-07-21-post-mvp-validation-plan.md) for the next decision gates.
 
 ## See it in one minute
 
@@ -128,7 +130,7 @@ uv run pytest -q
 uv build --all-packages
 ```
 
-See `AGENTS.md` before contributing and `docs/plans/` for the decision record and implementation sequence.
+See `AGENTS.md` before contributing, `docs/validation/` for observed results, and `docs/plans/` for decision records and implementation sequences.
 
 ## Validation questions
 
