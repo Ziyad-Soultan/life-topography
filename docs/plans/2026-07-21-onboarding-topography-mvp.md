@@ -4,6 +4,8 @@
 
 **Validation question:** Does seeing an evidence-backed map of people, organizations, and threads from your own history feel materially more useful than inbox search?
 
+**Technical sweep status (2026-07-21):** the code, packaging, 5,000-message synthetic import, provenance, browser flow, local-only behavior, and physical reset passed. Docker runtime and a repeatable 390px render were unavailable on the validation host, and no personal archive or external tester completed the flow. The implementation is a technical validation candidate; this plan's full completion gate remains open until all acceptance criteria below pass. See the [validation record](../validation/2026-07-21-mvp-validation-sweep.md).
+
 ## Product boundary
 
 This is a local, single-user validation build. It is not a general assistant, hosted service, or Gmail OAuth product.
