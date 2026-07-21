@@ -15,13 +15,14 @@ async def test_health_endpoint_is_small_and_explicit() -> None:
     assert response.json() == {
         "service": "life-topography",
         "status": "ok",
-        "stage": "pre-alpha",
+        "stage": "validation-mvp",
     }
 
 
-def test_doctor_warns_that_real_personal_data_is_unsafe() -> None:
+def test_doctor_reports_mvp_and_unencrypted_vault_boundary() -> None:
     result = CliRunner().invoke(cli, ["doctor"])
 
     assert result.exit_code == 0
-    assert "pre-alpha" in result.stdout
+    assert "validation MVP" in result.stdout
     assert "Do not use real personal data" in result.stdout
+    assert "not application-level encrypted" in result.stdout

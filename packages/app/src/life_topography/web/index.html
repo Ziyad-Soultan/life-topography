@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Life Topography</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23080d13'/%3E%3Cpath d='M8 23V15M16 23V8M24 23V12' stroke='%236ee7c1' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Life Topography home">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span>Life Topography</span>
+    </a>
+    <div class="local-badge"><span class="status-dot"></span>Local vault</div>
+  </header>
+
+  <main id="main">
+    <section id="loading-view" class="loading-view" aria-live="polite">
+      <div class="spinner"></div><p>Opening your local map…</p>
+    </section>
+
+    <section id="onboarding-view" class="onboarding hidden">
+      <div class="onboarding-copy">
+        <p class="eyebrow">Private by default</p>
+        <h1>Map your history.<br><span>Keep the evidence.</span></h1>
+        <p class="lede">Turn a local email export into an inspectable map of the people, organizations, and threads that shaped your time.</p>
+        <ul class="promise-list">
+          <li><span class="check">✓</span><div><strong>Headers only</strong><small>Bodies and attachments are never retained.</small></div></li>
+          <li><span class="check">✓</span><div><strong>Evidence-backed</strong><small>Every connection links to the records that created it.</small></div></li>
+          <li><span class="check">✓</span><div><strong>Actually deletable</strong><small>Erase the evidence and every derived map object together.</small></div></li>
+        </ul>
+      </div>
+
+      <div class="onboarding-panel" aria-labelledby="setup-title">
+        <div class="step-indicator"><span class="active"></span><span></span><span></span></div>
+        <div id="setup-step">
+          <p class="step-label">Step 1 of 3</p>
+          <h2 id="setup-title">Choose a local export</h2>
+          <p class="muted">Use an MBOX file from Google Takeout, Thunderbird, or another mail client. Nothing is uploaded.</p>
+          <form id="preview-form" class="form-stack">
+            <label>Path to MBOX file
+              <input id="mbox-path" name="path" type="text" placeholder="/home/you/Takeout/Mail/All mail.mbox" autocomplete="off" required>
+            </label>
+            <label>Your primary email
+              <input id="owner-email" name="owner_email" type="email" placeholder="you@example.com" autocomplete="email" required>
+              <small>Used only to distinguish you from other people in the map.</small>
+            </label>
+            <div id="setup-error" class="notice error hidden" role="alert"></div>
+            <button class="button primary" type="submit">Preview import <span>→</span></button>
+            <div class="demo-separator"><span>or evaluate safely</span></div>
+            <button id="start-demo" class="button quiet" type="button">Load the synthetic demo</button>
+          </form>
+        </div>
+
+        <div id="consent-step" class="hidden">
+          <p class="step-label">Step 2 of 3</p>
+          <h2>Review the boundary</h2>
+          <div id="preview-stats" class="preview-stats"></div>
+          <div class="scope-box">
+            <div><strong>Retained</strong><p>Addresses, display names, dates, subjects, message IDs, and thread structure.</p></div>
+            <div><strong>Excluded</strong><p>Message bodies, attachments, OAuth credentials, and remote access.</p></div>
+          </div>
+          <label class="consent-row">
+            <input id="consent" type="checkbox">
+            <span>I consent to local, metadata-only processing of this file.</span>
+          </label>
+          <div id="consent-error" class="notice error hidden" role="alert"></div>
+          <div class="button-row">
+            <button id="back-to-setup" class="button quiet" type="button">Back</button>
+            <button id="start-import" class="button primary" type="button" disabled>Build my map <span>→</span></button>
+          </div>
+        </div>
+
+        <div id="progress-step" class="hidden" aria-live="polite">
+          <p class="step-label">Step 3 of 3</p>
+          <h2>Building the first map</h2>
+          <p id="progress-copy" class="muted">Persisting immutable evidence…</p>
+          <div class="progress-track"><div id="progress-bar"></div></div>
+          <div class="progress-meta"><span id="progress-phase">Starting</span><span id="progress-count">0 / 0</span></div>
+          <div class="processing-note"><span class="spinner small"></span><span>Keep this tab and the local daemon running. Re-imports resume from the last committed message.</span></div>
+          <div id="progress-error" class="notice error hidden" role="alert"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard-view" class="dashboard hidden">
+      <aside class="sidebar">
+        <nav aria-label="Primary">
+          <button class="nav-item active"><span class="nav-icon">⌁</span>Topography</button>
+          <button class="nav-item" data-source-nav><span class="nav-icon">◫</span>Source</button>
+        </nav>
+        <div class="sidebar-foot">
+          <button class="nav-item danger" data-reset-open><span class="nav-icon">×</span>Erase vault</button>
+          <p>Evidence stays on this machine.</p>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="workspace-head">
+          <div><p class="eyebrow">Initial map</p><h1>Your topography</h1><p class="muted">A deterministic view of your imported email relationships.</p></div>
+          <div class="workspace-actions">
+            <button class="button quiet mobile-action" data-source-nav>Source</button>
+            <button class="button quiet mobile-action danger-text" data-reset-open>Erase</button>
+            <button id="refresh-map" class="button quiet">Refresh</button>
+          </div>
+        </header>
+        <div id="summary-grid" class="summary-grid"></div>
+        <section id="highlights" class="highlights" aria-label="What stands out"></section>
+
+        <div class="map-layout">
+          <section class="map-card" aria-labelledby="map-title">
+            <div class="card-head"><div><p class="section-label">Relationship map</p><h2 id="map-title">Connections by activity</h2><p id="map-scope" class="map-scope"></p></div><div class="legend"><span><i class="person"></i>Person</span><span><i class="org"></i>Org</span><span><i class="thread"></i>Thread</span></div></div>
+            <div class="canvas-wrap"><svg id="topology-canvas" viewBox="0 0 900 600" role="group" aria-label="Interactive relationship map"></svg></div>
+          </section>
+
+          <aside id="detail-card" class="detail-card">
+            <p class="section-label">Inspect</p>
+            <div id="detail-empty"><h2>Select a node</h2><p class="muted">Choose any person, organization, or thread to inspect its relationships and source evidence.</p></div>
+            <div id="detail-content" class="hidden"></div>
+          </aside>
+        </div>
+
+        <div class="ranked-grid">
+          <section class="rank-card"><div class="card-head"><div><p class="section-label">People</p><h2>Frequent contacts</h2></div></div><div id="people-list" class="rank-list"></div></section>
+          <section class="rank-card"><div class="card-head"><div><p class="section-label">Organizations</p><h2>Domain clusters</h2></div></div><div id="org-list" class="rank-list"></div></section>
+          <section class="rank-card"><div class="card-head"><div><p class="section-label">Threads</p><h2>Active contexts</h2></div></div><div id="thread-list" class="rank-list"></div></section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="evidence-dialog">
+    <div class="dialog-head"><div><p class="eyebrow">Source evidence</p><h2>Header record</h2></div><button class="icon-button" data-close-dialog aria-label="Close">×</button></div>
+    <div id="evidence-body"></div>
+  </dialog>
+
+  <dialog id="reset-dialog">
+    <form method="dialog" id="reset-form">
+      <div class="dialog-head"><div><p class="eyebrow danger-text">Destructive action</p><h2>Erase the local vault?</h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div>
+      <p class="muted">This permanently deletes imported evidence, cursors, nodes, edges, and provenance links.</p>
+      <label>Type <strong>DELETE MY MAP</strong> to continue
+        <input id="reset-confirmation" autocomplete="off">
+      </label>
+      <div id="reset-error" class="notice error hidden" role="alert"></div>
+      <div class="button-row"><button class="button quiet" value="cancel">Cancel</button><button id="reset-submit" class="button destructive" type="button">Erase everything</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

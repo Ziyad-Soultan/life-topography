@@ -15,6 +15,7 @@ build/
 /data/
 *.db
 *.sqlite*
+*.mbox
 .DS_Store
 .idea/
 .vscode/
