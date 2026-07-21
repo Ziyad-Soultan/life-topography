@@ -76,6 +76,8 @@ The map is deliberately deterministic. No AI is required to produce it, and SQLi
 
 ## Docker
 
+> **Verification note:** the Compose configuration is included and CI builds the container, but Docker/Podman runtime behavior was not exercised during the 2026-07-21 host sweep because neither runtime was available there.
+
 Expose the app on loopback and mount an import directory read-only:
 
 ```bash
