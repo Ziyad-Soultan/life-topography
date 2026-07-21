@@ -15,9 +15,14 @@ Build:
 - resumable/idempotent evidence ingestion;
 - deterministic person, organization, and thread topology;
 - provenance from every node and edge to source evidence;
-- onboarding progress, map exploration, source status, and full reset;
+- onboarding progress, map exploration, fresh-source import navigation, and full reset;
 - synthetic demo path requiring no personal data;
-- localhost web UI, CLI workflow, tests, Docker, and CI.
+- localhost web UI, CLI workflow, tests, Docker configuration, and CI.
+
+Outstanding in the candidate:
+- current-source receipt/status details and an explicit back-to-map action;
+- runtime verification of Docker and the final 390px layout;
+- personal-archive and external-user acceptance.
 
 Defer:
 - Gmail OAuth and push notifications;
