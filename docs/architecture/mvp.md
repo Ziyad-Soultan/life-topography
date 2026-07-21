@@ -1,6 +1,6 @@
-# Life Topography — privacy-first, self-hosted MVP architecture
+# Life Topography — privacy-first, self-hosted target architecture
 
-> **Status:** long-term target architecture written before the MBOX validation build. It is not a description of the current implementation. The shipped technical validation MVP uses metadata-only local MBOX import and ordinary SQLite with owner-only permissions; SQLCipher, Gmail OAuth, attachments, MCP, and model features remain deferred. See the [implemented validation sweep](../validation/2026-07-21-mvp-validation-sweep.md) and [next-phase plan](../plans/2026-07-21-post-mvp-validation-plan.md).
+> **Status:** long-term target architecture written before the MBOX validation build. It is not a description of the current implementation. The technical validation candidate uses metadata-only local MBOX import and ordinary SQLite with owner-only permissions; SQLCipher, Gmail OAuth, attachments, MCP, and model features remain deferred. See the [implemented validation sweep](../validation/2026-07-21-mvp-validation-sweep.md) and [next-phase plan](../plans/2026-07-21-post-mvp-validation-plan.md).
 
 **Long-term target decision:** if the deterministic map proves useful, evolve toward a single-user local application with an encrypted SQLite/SQLCipher vault, consent-gated Gmail **metadata-first** connector, deterministic ingestion/indexing, and a local-only query API/UI. Offer an optional local agent through MCP only after the evidence layer earns it. Neither an LLM nor an agent is necessary for retrieval. Raw personal data never leaves the host by default.
 
@@ -8,7 +8,7 @@ This deliberately does **not** start as a generic agent, cloud graph database, v
 
 ## 1. Product contract and non-goals
 
-### The MVP user outcome
+### The target-phase user outcome
 For a user-selected Gmail account and date range, build a private, inspectable timeline/map of:
 
 - interactions (thread/date/direction/participants),
@@ -16,12 +16,12 @@ For a user-selected Gmail account and date range, build a private, inspectable t
 - user-approved topics and relationships,
 - a confidence-scored “topography” view, where every result can open the exact local source record and its consent/provenance.
 
-### Explicit MVP limits
+### Explicit target-phase limits
 
 - **One human, one vault, one Gmail account; Gmail read-only.** No sending, modifying labels, delegated/domain-wide authority, sharing, collaboration, calendar, location tracking, or social/health/financial connectors.
 - Start with Gmail **metadata**, headers, labels, snippets, and thread structure. Full body retrieval/indexing is a separate, per-message or per-query consent action—not a background default.
 - No cloud embedding, model, telemetry, crash reporting, analytics, or remote inference by default. A user may explicitly configure a remote provider later, but the request must contain a sanitized derived prompt—not raw messages—unless a separate per-request confirmation allows raw data.
-- No autonomous action. The system is read-only in MVP and never lets an LLM expand scopes, enable a connector, or export data.
+- No autonomous action. The system is read-only in the target phase and never lets an LLM expand scopes, enable a connector, or export data.
 
 ## 2. Component decisions
 
@@ -35,13 +35,13 @@ UI / local REST API <── query service <── SQLCipher vault <────�
                                              └─ skills = constrained workflows/policy text
 ```
 
-| Component | MVP decision | Why / boundary |
+| Component | Target-phase decision | Why / boundary |
 |---|---|---|
 | System of record | **SQLite with SQLCipher**, WAL mode, migrations, foreign keys, FTS5. One DB per vault. | A single-user local product needs transactional ingestion, simple backup, portable export, and reliable foreign-key deletion more than distributed scale. Encrypt DB pages; do not mistake an app-level password hash for encryption. |
 | Attachments / raw full messages | Separate encrypted object files, content-addressed only by a *keyed* digest; metadata in DB. Default: do not download. | Avoids database bloat and lets a full-body/attachment object be revoked independently. The keyed digest reduces offline correlation across vaults. |
 | Connectors | Isolated, capability-declared workers communicating through a local versioned ingestion protocol. Gmail first. | Connector code gets the minimum scoped secret and produces normalized records; it cannot query arbitrary vault data or call models/network services. |
-| Search / embeddings | FTS5 and structured SQL first. Optional local embedding model + on-disk HNSW/SQLite vector extension for approved derived text only. | Keyword/date/person queries cover MVP. Vectors are lossy derived personal data, costly to delete/rebuild, and do not replace evidence. Do not introduce a hosted vector DB. |
-| Graph | Relational edge tables and SQL recursive queries/materialized aggregates; no graph DB in MVP. | `entity`, `edge`, and `observation` tables form a property graph without another authorization/encryption/backup plane. Promote to a graph engine only if multi-hop analytical latency is measured as a problem. |
+| Search / embeddings | FTS5 and structured SQL first. Optional local embedding model + on-disk HNSW/SQLite vector extension for approved derived text only. | Keyword/date/person queries cover the target phase. Vectors are lossy derived personal data, costly to delete/rebuild, and do not replace evidence. Do not introduce a hosted vector DB. |
+| Graph | Relational edge tables and SQL recursive queries/materialized aggregates; no graph DB in the target phase. | `entity`, `edge`, and `observation` tables form a property graph without another authorization/encryption/backup plane. Promote to a graph engine only if multi-hop analytical latency is measured as a problem. |
 | Local small model | Optional, downloaded/model-version-pinned local model via llama.cpp/Ollama class runtime. Use only for bounded extraction (topic suggestion, entity alias suggestion, query intent), with schema-constrained output. | The model is an untrusted probabilistic helper. Deterministic normalizers create canonical records; user/evidence gates any model-created relation. A 1–4B quantized model is adequate for suggestions but not a source of truth. |
 | MCP | A **localhost-only, authenticated MCP server** exposing narrow read tools (`search_observations`, `get_evidence`, `topography_summary`) and explicit consent/status tools. | MCP is the integration boundary for clients/agents—not the database or policy engine. It returns source IDs/quoted minimised fields, enforces capability scopes and audit events, and has no generic SQL, filesystem, token, or network tool. |
 | Agent harness | Thin local orchestrator with an allowlisted tool registry, per-tool schemas, policy checks, budget/time limit, audit trail, and human confirmation boundary. | It may plan a read-only investigation; it cannot bypass connector/consent rules. It should run without a cloud key and use the local model optionally. |
@@ -49,7 +49,7 @@ UI / local REST API <── query service <── SQLCipher vault <────�
 
 ### Deployment profile
 
-- Default: bind UI/API/MCP to Unix socket or `127.0.0.1`; use OS account permissions (`0700` vault directory). If hosted on a personal VPS, place it behind WireGuard/Tailscale or SSH forwarding—not a public reverse proxy in MVP.
+- Default: bind UI/API/MCP to Unix socket or `127.0.0.1`; use OS account permissions (`0700` vault directory). If hosted on a personal VPS, place it behind WireGuard/Tailscale or SSH forwarding—not a public reverse proxy in the target phase.
 - Run connector, API, and model runner as separate least-privileged processes/users. The connector secret directory is readable only by connector/token broker; the UI/agent never receives refresh tokens.
 - Model packages are code/supply-chain inputs: pin checksum/version, show model license and size before download, and support offline import.
 
@@ -110,13 +110,13 @@ A deletion request must be idempotent, resumable, and expose a job status. Backu
 
 **Scopes and client flow**
 
-- Gmail metadata-only MVP needs `https://www.googleapis.com/auth/gmail.metadata` (restricted). Do not request `gmail.readonly` until the user enables full message content, and never request `mail.google.com/`, `gmail.modify`, or `gmail.send` for this product’s MVP. Gmail scope guidance explicitly says to choose the narrowest scope and notes that Gmail scopes can be restricted.
+- The initial Gmail target needs `https://www.googleapis.com/auth/gmail.metadata` (restricted). Do not request `gmail.readonly` until the user enables full message content, and never request `mail.google.com/`, `gmail.modify`, or `gmail.send` in this target phase. Gmail scope guidance explicitly says to choose the narrowest scope and notes that Gmail scopes can be restricted.
 - Use an OAuth **Desktop app** client for a client-side deployment. Launch the system browser; use Authorization Code with PKCE (S256), a random validated `state`, and an installed-app loopback redirect as Google documents. Do not embed a browser/webview or use the deprecated out-of-band flow.
 - Request scopes incrementally at the feature that needs them. Display the exact account and scopes. If token refresh fails/revocation occurs, stop sync and require new consent—never retry with broader scope.
 - A public product using restricted Gmail scopes must plan for Google OAuth verification/security assessment requirements before broad distribution. For a personal/testing deployment, configure the consent screen/test users correctly; this does not erase the obligation when publishing.
 - Token broker owns offline refresh token. Encrypt at rest, rotate/revoke on disconnect, use least-privilege file permissions, and never return it through MCP. Consider DPoP for refresh-token sender constraint where the chosen client/library supports it.
 
-## 6. Shippable MVP: services, acceptance criteria, and deferrals
+## 6. Post-validation target phase: services, acceptance criteria, and deferrals
 
 ### Services
 
@@ -135,7 +135,7 @@ A deletion request must be idempotent, resumable, and expose a job status. Backu
 - “Forget a message/thread/date range” immediately suppresses it and completes an auditable derivation/index purge; disconnect revokes token and blocks future sync.
 - Network egress test proves that, after OAuth/sync, no raw mail is sent to any non-Google endpoint by default.
 
-### Not in MVP
+### Not in the target phase
 
 Full-body/attachment corpus, additional connectors, write actions, public internet hosting, multi-user tenancy, realtime push/webhooks, cross-device sync, cloud LLMs/vector stores, automatic life conclusions, and graph-database migration.
 
@@ -247,5 +247,5 @@ For Gmail specifically, bootstrap via a bounded paged history/import and then ad
 4. [OWASP Cryptographic Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html) — authenticated encryption, key-management separation, and avoiding plaintext sensitive storage.
 5. [NIST SP 800-57 Part 1 Rev. 5](https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final) — key-management lifecycle principles. Use it as a security baseline, while validating library/platform-specific implementation details.
 
-**Decision gate after MVP:** measure whether FTS + relational graph meets target latency/quality on a representative private fixture set. Add a dedicated vector or graph database only when those measurements, rather than architecture fashion, justify a new encrypted stateful service.
+**Decision gate after the target phase:** measure whether FTS + relational graph meets target latency/quality on a representative private fixture set. Add a dedicated vector or graph database only when those measurements, rather than architecture fashion, justify a new encrypted stateful service.
 

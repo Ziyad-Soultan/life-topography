@@ -45,7 +45,7 @@ No personal values were copied into the repository, report, fixtures, screenshot
 | Browser privacy headers | Pass | CSP/referrer/nosniff; personal API and errors are `no-store` |
 | Scope preview | Pass | exact count, address count, size, date range, invalid-date count, retained/excluded fields |
 | Consent and progress | Pass | import disabled before consent; queued/import/project/complete states rendered |
-| Map comprehension | Pass with limitations | stable large map, ranked lists, explicit 30/603 object disclosure |
+| Map rendering and inspectability | Pass with limitations | stable large map, ranked lists, explicit 30/603 object disclosure; user comprehension remains untested |
 | Node provenance | Pass | object evidence, total count, observed range, derivation shown |
 | Relationship provenance | Pass | typed edges and connection-specific evidence available |
 | Evidence minimization | Pass | modal exposed bounded headers only; no canaries |
