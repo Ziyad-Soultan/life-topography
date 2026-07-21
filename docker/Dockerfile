@@ -10,7 +10,7 @@ FROM python:3.12-slim-bookworm AS runtime
 RUN groupadd --system topography && useradd --system --gid topography --home /app topography
 WORKDIR /app
 COPY --from=builder --chown=topography:topography /app/.venv /app/.venv
-ENV PATH="/app/.venv/bin:$PATH" TOPOGRAPHY_DATA_DIR=/data
+ENV PATH="/app/.venv/bin:$PATH" TOPOGRAPHY_DATABASE=/data/vault.db
 RUN mkdir /data && chown topography:topography /data
 USER topography
 VOLUME ["/data"]

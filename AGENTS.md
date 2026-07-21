@@ -35,20 +35,20 @@ The product is the ingestion kernel: resumable historical bootstrap, continuous 
 ## Current product boundary
 
 Build now:
-- connector SDK and contract tests;
-- ingestion batches, evidence envelopes, cursors, receipts, and idempotency;
-- SQLite persistence and migrations;
-- local API, CLI, and read-only MCP surface;
-- reference fixture connector;
+- local MBOX preview and metadata-only bootstrap;
+- deterministic person, organization, and thread projections;
+- provenance and full derivative deletion;
+- onboarding progress and a restrained localhost map UI;
+- synthetic demo data and terminal-first import workflow;
 - Docker/Compose and boring CI.
 
 Do not build yet:
-- web or desktop UI;
+- Gmail OAuth, message bodies, attachments, or cloud sync;
 - graph database, message broker, Kubernetes, or distributed workers;
-- custom model training or mandatory embeddings;
+- custom model training, summaries, or mandatory embeddings;
 - autonomous writes to external systems;
 - multi-user tenancy or public internet hosting;
-- dynamic plugin marketplace.
+- dynamic plugin marketplace or additional source connectors.
 
 ## Architecture boundaries
 

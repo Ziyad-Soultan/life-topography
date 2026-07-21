@@ -8,8 +8,10 @@ services:
       - "127.0.0.1:8787:8787"
     volumes:
       - topography-data:/data
+      - ${TOPOGRAPHY_IMPORTS:-../imports}:/imports:ro
     environment:
-      TOPOGRAPHY_DATA_DIR: /data
+      TOPOGRAPHY_DATABASE: /data/vault.db
+      TOPOGRAPHY_IMPORT_ROOTS: /imports
 
 volumes:
   topography-data:
